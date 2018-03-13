@@ -2,12 +2,13 @@
 #include <sys/file.h>
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <cstdio>
 #include <limits>
 #include <termios.h>
 #include <errno.h>
 
-int Keyboard::initKeyboard(int keyboardNumber)
+int Keyboard::initKeyboard(unsigned int keyboardNumber)
 {
     const int bufferSize = 1024;
     static std::string filesNames[maxKeyboarsNumber];
@@ -36,7 +37,6 @@ int Keyboard::initKeyboard(int keyboardNumber)
                     str.erase(0, str.find('\"') + 1);
                     str.erase(str.find('\"'), 2);
                     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-                    //boost::algorithm::to_lower(str);
                     if(str.find("keyboard") != std::string::npos){
                         deviceNameIsGood = 1;
                         continue;
@@ -144,7 +144,7 @@ void* Keyboard::updatingKeyboardState(void* arg)
     }
 }
 
-Keyboard::Keyboard(int keyboardNumber)
+Keyboard::Keyboard(unsigned int keyboardNumber)
 {
     wasInitialized = 0;
     echoEnable(0);
@@ -172,18 +172,14 @@ bool Keyboard::keyPush(int key)
 
 Keyboard::~Keyboard()
 {
-	std::cout << "Ending keyboard" << std::endl;
     pthread_cancel(updatingKeyboardStateThread);
     pthread_join(updatingKeyboardStateThread, NULL);
     close(file);
 
-	std::cout << "1" << std::endl;
     clearInputBuffer();
-	std::cout << "2" << std::endl;
 
     //Enabling echo in console
     echoEnable(1);
-	std::cout << "Ended keyboard" << std::endl;
 }
 
 void echoEnable(bool enable)
