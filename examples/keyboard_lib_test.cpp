@@ -1,6 +1,5 @@
-#include <unistd.h>
-#include <iostream>
 #include <keyboard_lib.hpp>
+#include <iostream>
 
 using std::cout;
 using std::cin;
@@ -19,7 +18,7 @@ int main (int argc, char *argv[])
             if(keyboard.keyPush(i)) cout << "Pushed key " << i << endl;
 	    }
 
-        usleep(50000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(50));
     }
     return 0;
 }
