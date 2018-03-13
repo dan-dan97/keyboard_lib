@@ -22,13 +22,12 @@ private:
     boost::posix_time::ptime lastKeyPushTime[maxKeysNumber];
     pthread_t updatingKeyboardStateThread;
 
-    int initKeyboard(const char* eventHandler);
     int initKeyboard(int keyboardNumber);
+    int initKeyboardByPath(const char* eventHandler);
     static void* updatingKeyboardState(void* arg);
 
 public:
 
-    Keyboard(const char* eventHandler);
     Keyboard(int keyboardNumber = 0);
     bool keyDown(int key);
     bool keyPush(int key);
