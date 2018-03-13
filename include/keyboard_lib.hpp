@@ -2,6 +2,7 @@
 
 #include <linux/input.h>
 #include <boost/thread/thread.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <pthread.h>
 
 class Keyboard
@@ -22,13 +23,13 @@ private:
     boost::posix_time::ptime lastKeyPushTime[maxKeysNumber];
     pthread_t updatingKeyboardStateThread;
 
-    int initKeyboard(int keyboardNumber);
+    int initKeyboard(unsigned int keyboardNumber);
     int initKeyboardByPath(const char* eventHandler);
     static void* updatingKeyboardState(void* arg);
 
 public:
 
-    Keyboard(int keyboardNumber = 0);
+    Keyboard(unsigned int keyboardNumber = 0);
     bool keyDown(int key);
     bool keyPush(int key);
     ~Keyboard();
