@@ -7,28 +7,6 @@
 #include <termios.h>
 #include <errno.h>
 
-int Keyboard::initKeyboard(const char* eventHandler)
-{
-    for(int i = 0; i < maxKeysNumber; i++) {
-        keyDownMap[i] = 0;
-        keyPushMap[i] = 0;
-    }
-
-    if(!eventHandler) return -1;
-
-    file = open(eventHandler, O_RDONLY|O_NONBLOCK);
-    if (file == -1){
-        std::cout << "Error opening keyboard file! Maybe you need unroot it" << std::endl;
-        return -1;
-    }
-
-    if(!wasInitialized){
-        wasInitialized = 1;
-        pthread_create(&updatingKeyboardStateThread, NULL, updatingKeyboardState, (void*)this);
-    }
-    return 0;
-}
-
 int Keyboard::initKeyboard(int keyboardNumber)
 {
     const int bufferSize = 1024;
@@ -91,7 +69,29 @@ int Keyboard::initKeyboard(int keyboardNumber)
     }
     pclose(commandFile);
 
-    return initKeyboard(keyboardNumber == -1 ? NULL : filesNames[keyboardNumber].c_str());
+    return initKeyboardByPath(keyboardNumber == -1 ? NULL : filesNames[keyboardNumber].c_str());
+}
+
+int Keyboard::initKeyboardByPath(const char* eventHandler)
+{
+    for(int i = 0; i < maxKeysNumber; i++) {
+        keyDownMap[i] = 0;
+        keyPushMap[i] = 0;
+    }
+
+    if(!eventHandler) return -1;
+
+    file = open(eventHandler, O_RDONLY|O_NONBLOCK);
+    if (file == -1){
+        std::cout << "Error opening keyboard file! Maybe you need unroot it" << std::endl;
+        return -1;
+    }
+
+    if(!wasInitialized){
+        wasInitialized = 1;
+        pthread_create(&updatingKeyboardStateThread, NULL, updatingKeyboardState, (void*)this);
+    }
+    return 0;
 }
 
 void* Keyboard::updatingKeyboardState(void* arg)
@@ -142,13 +142,6 @@ void* Keyboard::updatingKeyboardState(void* arg)
         if(delay_duration.total_milliseconds() > 0)
             boost::this_thread::sleep(delay_duration);
     }
-}
-
-Keyboard::Keyboard(const char* eventHandler)
-{
-    wasInitialized = 0;
-    echoEnable(0);
-    initKeyboard(eventHandler);
 }
 
 Keyboard::Keyboard(int keyboardNumber)
