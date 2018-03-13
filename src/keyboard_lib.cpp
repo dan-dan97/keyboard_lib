@@ -210,11 +210,15 @@ void echoEnable(bool enable)
     }
 }
 
+void* stdinClearFunction(void* arg){
+    std::cin.ignore();
+}
+
 void clearInputBuffer()
 {
-    static bool firstTime = 1;
-    if(firstTime){
-        firstTime = 0;
-        while(scanf("%*c"));
-    }
+    pthread_t stdinClearThread;
+    pthread_create(&stdinClearThread, NULL, stdinClearFunction, NULL);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+    pthread_cancel(stdinClearThread);
+    pthread_join(stdinClearThread, NULL);
 }
