@@ -1,19 +1,11 @@
 #include <keyboard_lib.hpp>
 #include <sys/file.h>
-#include <pthread.h>
-#include <stdio.h>
+#include <iostream>
 #include <string>
+#include <cstdio>
 #include <limits>
 #include <termios.h>
-#include <iostream>
 #include <errno.h>
-#include <boost/algorithm/string.hpp>
-#include <boost/thread/thread.hpp>
-
-using std::cout;
-using std::cin;
-using std::endl;
-using std::string;
 
 int Keyboard::initKeyboard(const char* eventHandler)
 {
@@ -26,7 +18,7 @@ int Keyboard::initKeyboard(const char* eventHandler)
 
     file = open(eventHandler, O_RDONLY|O_NONBLOCK);
     if (file == -1){
-        cout << "Error opening keyboard file! Maybe you need unroot it" << endl;
+        std::cout << "Error opening keyboard file! Maybe you need unroot it" << std::endl;
         return -1;
     }
 
@@ -40,7 +32,7 @@ int Keyboard::initKeyboard(const char* eventHandler)
 int Keyboard::initKeyboard(int keyboardNumber)
 {
     const int bufferSize = 1024;
-    static string filesNames[maxKeyboarsNumber];
+    static std::string filesNames[maxKeyboarsNumber];
     char buffer[bufferSize];
     FILE *commandFile;
     int keyboardsNumber = 0;
@@ -58,23 +50,24 @@ int Keyboard::initKeyboard(int keyboardNumber)
             while(1){
                 fgets(buffer, bufferSize, commandFile);
                 if(buffer[0] == 10 && buffer[1] == 0) break;
-                string str = buffer;
+                std::string str = buffer;
                 findRes1 = str.find("name");
                 findRes2 = str.find(':');
-                if(findRes1 != string::npos && findRes2 != string::npos && findRes1 < findRes2)
+                if(findRes1 != std::string::npos && findRes2 != std::string::npos && findRes1 < findRes2)
                 {
                     str.erase(0, str.find('\"') + 1);
                     str.erase(str.find('\"'), 2);
-                    boost::algorithm::to_lower(str);
-                    if(str.find("keyboard") != string::npos){
+                    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+                    //boost::algorithm::to_lower(str);
+                    if(str.find("keyboard") != std::string::npos){
                         deviceNameIsGood = 1;
                         continue;
                     }
                 }
                 findRes1 = str.find("bits ev");
                 findRes2 = str.find(':');
-                if(findRes1 != string::npos && findRes2 != string::npos && findRes1 < findRes2)
-                    if(str.find("EV_SYN") != string::npos && str.find("EV_KEY") != string::npos){
+                if(findRes1 != std::string::npos && findRes2 != std::string::npos && findRes1 < findRes2)
+                    if(str.find("EV_SYN") != std::string::npos && str.find("EV_KEY") != std::string::npos){
                         deviceEventsAreGood = 1;
                         continue;
                     }
@@ -83,17 +76,17 @@ int Keyboard::initKeyboard(int keyboardNumber)
         }
         if(keyboardNumber < 0 || (keyboardNumber >= keyboardsNumber && keyboardsNumber != 0))
         {
-            if(!wasInitialized)cout << "Invalid keyboard number!" << endl;
+            if(!wasInitialized)std::cout << "Invalid keyboard number!" << std::endl;
             keyboardNumber = -1;
         }
         if(keyboardsNumber == 0)
         {
-            if(!wasInitialized)cout << "Error reading keyboars list! Maybe you need root access or input-utils is not installed" << endl;
+            if(!wasInitialized)std::cout << "Error reading keyboars list! Maybe you need root access or input-utils is not installed" << std::endl;
             keyboardNumber = -1;
         }
     }
     else {
-        cout << "Error running lsinput" << endl;
+        std::cout << "Error running lsinput" << std::endl;
         keyboardNumber = -1;
     }
     pclose(commandFile);
@@ -186,14 +179,18 @@ bool Keyboard::keyPush(int key)
 
 Keyboard::~Keyboard()
 {
+	std::cout << "Ending keyboard" << std::endl;
     pthread_cancel(updatingKeyboardStateThread);
     pthread_join(updatingKeyboardStateThread, NULL);
     close(file);
 
+	std::cout << "1" << std::endl;
     clearInputBuffer();
+	std::cout << "2" << std::endl;
 
     //Enabling echo in console
     echoEnable(1);
+	std::cout << "Ended keyboard" << std::endl;
 }
 
 void echoEnable(bool enable)
