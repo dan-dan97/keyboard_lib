@@ -1,8 +1,8 @@
-#ifndef KEYBOARD_LIB_HPP
-#define KEYBOARD_LIB_HPP
+#pragma once
 
 #include <linux/input.h>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread/thread.hpp>
+#include <pthread.h>
 
 class Keyboard
 {
@@ -39,5 +39,3 @@ public:
 void echoEnable(bool enable);
 
 void clearInputBuffer();
-
-#endif //KEYBOARD_LIB_HPP
