@@ -7,6 +7,7 @@
 #include <limits>
 #include <termios.h>
 #include <errno.h>
+#include <boost/thread/thread.hpp>
 
 int Keyboard::initKeyboard(unsigned int keyboardNumber)
 {
