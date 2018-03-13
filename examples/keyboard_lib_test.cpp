@@ -1,4 +1,5 @@
 #include <keyboard_lib.hpp>
+#include <boost/thread/thread.hpp>
 #include <iostream>
 
 int main (int argc, char *argv[])
