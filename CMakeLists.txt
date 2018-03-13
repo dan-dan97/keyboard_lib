@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(keyboard_lib)
 
-find_package(Boost COMPONENTS thread REQUIRED)
+find_package(Boost COMPONENTS date_time thread REQUIRED)
 
 include_directories(
     include
