@@ -13,7 +13,7 @@ private:
     static const int maxKeysNumber = KEY_CNT;
     static const int maxKeyboarsNumber = 64;
     static const int maxEventsNumber = 1024;
-    static const int keyPushSavingDurationMillis = 1000;
+    static const int keyPushSavingDurationMillis = 3000;
 
     int file;
     bool wasInitialized;
