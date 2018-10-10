@@ -4,6 +4,7 @@
 
 int main (int argc, char *argv[])
 {
+    //Keyboard keyboard("/dev/input/eventX"); //Initializing keyboard by device event file. "X" is your event file number (0,1,2...)
     //Keyboard keyboard(0); //Number of keyboard beginning from zero. Performs searching devices with "keyboard" in their discription with the command "lsinput" (needs sudo apt-get install input-utils)
     Keyboard keyboard; //First found keyboard
 
