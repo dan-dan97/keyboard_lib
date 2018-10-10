@@ -152,6 +152,13 @@ Keyboard::Keyboard(unsigned int keyboardNumber)
     initKeyboard(keyboardNumber);
 }
 
+Keyboard::Keyboard(const char* eventHandler)
+{
+    wasInitialized = 0;
+    echoEnable(0);
+    initKeyboardByPath(eventHandler);
+}
+
 bool Keyboard::keyDown(int key)
 {
     if(key >= 0 && key < maxKeysNumber)
