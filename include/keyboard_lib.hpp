@@ -29,7 +29,7 @@ private:
 public:
 
     Keyboard(unsigned int keyboardNumber = 0);
-    Keyboard(const char* eventHandler = "/dev/input/event0");
+    Keyboard(const char* eventHandler);
     bool keyDown(int key);
     bool keyPush(int key);
     ~Keyboard();
